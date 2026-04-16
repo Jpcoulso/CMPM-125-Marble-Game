@@ -4,36 +4,39 @@ using TMPro;
 
 public class marnoldMover : MonoBehaviour
 {
-    float desired_acceleration;
-    float desired_strafe;
-    public float impulse;
-    public float turnrate;
-    //public TextMeshProUGUI timelbl;
-    //float starttime;
+    //[Header("Movement Envelope Settings")]
+    //[Tooltip("Force applied at full sustain for input")]
+    //[SerializeField] private float _max_force = 20f;
+    //[Tooltip("Seconds to reach max force during sustained input")]
+    //[SerializeField] private float _ramp_time = 0.5f;
+    //[Tooltip("Seconds to decay to 0 force after input ends")]
+    //[SerializeField] private float _decay_time = 0.5f;
+    //[Tooltip("Handling")]
+    //[SerializeField] private float _turnrate = 0.15f;
 
-    void OnMove(InputValue action)
-    {
-        var movement = action.Get<Vector2>();
-        desired_acceleration = movement.y;
-        desired_strafe = movement.x;
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Rigidbody _rigidbody;
+    private Vector2 _raw_input;
+    private float _movement_x;
+    private float _movement_y; 
+
     void Start()
     {
-        //starttime = Time.time;
+        _rigidbody = GetComponent<Rigidbody>();
+        _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+        _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        _rigidbody.angularDamping = 0.5f;
+        _rigidbody.linearDamping = 0.1f;
+    }
+    void OnMove(InputValue value)
+    {
+        _raw_input = value.Get<Vector2>();
+        _movement_x = _raw_input.x;
+        _movement_y = _raw_input.y;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        GetComponent<Rigidbody>().AddRelativeForce(desired_acceleration*impulse, 0, 0);
-        GetComponent<Rigidbody>().AddRelativeForce(0, 0, -desired_strafe*impulse);
-        float dx = (Mouse.current.position.x.value - Screen.width / 2) / turnrate;
-        if (Mathf.Abs(dx) > 0.01f)
-        {
-            transform.Rotate(0, dx, 0);
-        }
-        // updates UI to record how long the race has been going on for
-        //timelbl.text = string.Format("Current time: {0:F2} seconds", (Time.time - starttime));
+        Vector3 movement = new Vector3(_movement_x, 0.0f, _movement_y);
+        _rigidbody.AddForce(movement);
     }
 }
