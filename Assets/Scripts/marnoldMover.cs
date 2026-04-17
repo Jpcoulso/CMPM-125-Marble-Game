@@ -13,7 +13,7 @@ public class marnoldMover : MonoBehaviour
     //[SerializeField] private float _decay_time = 0.5f;
     //[Tooltip("Handling")]
     //[SerializeField] private float _turnrate = 0.15f;
-
+    [SerializeField] private float _speeeeed = 3f;
     private Rigidbody _rigidbody;
     private Vector2 _raw_input;
     private float _movement_x;
@@ -22,10 +22,10 @@ public class marnoldMover : MonoBehaviour
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-        _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        _rigidbody.angularDamping = 0.5f;
-        _rigidbody.linearDamping = 0.1f;
+        //_rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+        //_rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        //_rigidbody.angularDamping = 0.5f;
+        //_rigidbody.linearDamping = 0.1f;
     }
     void OnMove(InputValue value)
     {
@@ -36,7 +36,12 @@ public class marnoldMover : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 movement = new Vector3(_movement_x, 0.0f, _movement_y);
+        Vector3 movement = new Vector3(_movement_x, 0.0f, _movement_y) * _speeeeed;
         _rigidbody.AddForce(movement);
+    }
+
+    public void Jump(float force)
+    {
+        _rigidbody.AddForce(new Vector3(0, force, 0));
     }
 }
