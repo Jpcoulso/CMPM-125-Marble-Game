@@ -56,9 +56,20 @@ public class marnoldMover : MonoBehaviour
         _rb.linearVelocity = new Vector3(newHorizontalVelocity.x, currentVelocity.y, newHorizontalVelocity.z);
     }
 
+    /// <summary>
+    /// Resets the player to a target position and completely stops all physics movement.
+    /// </summary>
+    public void ResetToPosition(Vector3 position)
+    {
+        transform.position = position;
+        _rb.linearVelocity = Vector3.zero;
+        _rb.angularVelocity = Vector3.zero;
+        // Optional: Reset any input state if needed
+        _input = Vector2.zero;
+    }
+
     public void Jump(float force)
     {
-        // Preserving the user's ForceMode.Force preference
         _rb.AddForce(new Vector3(0, force, 0), ForceMode.Force);
     }
 }
