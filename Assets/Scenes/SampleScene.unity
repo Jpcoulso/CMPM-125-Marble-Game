@@ -702,6 +702,7 @@ GameObject:
   - component: {fileID: 944805427}
   - component: {fileID: 944805426}
   - component: {fileID: 944805425}
+  - component: {fileID: 944805429}
   - component: {fileID: 944805424}
   m_Layer: 0
   m_Name: ThirdPersonCam
@@ -912,6 +913,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &944805429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944805423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bae841faf06f3a4881892203e5999ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonCameraController
+  zoomSpeed: 2
+  zoomLerpSpeed: 10
+  minDistance: 3
+  maxDistance: 15
 --- !u!4 &1777965921 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3977754140538150918, guid: bac98dfbae5ab7445bfb3900cbab25fa, type: 3}
