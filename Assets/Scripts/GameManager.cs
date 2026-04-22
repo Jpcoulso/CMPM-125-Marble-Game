@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 public class GameManager : MonoBehaviour
 {
@@ -21,7 +22,10 @@ public class GameManager : MonoBehaviour
 
     private Vector3 _startPosition;
 
+    [Header("UI Elements")] 
     [SerializeField] private TextMeshProUGUI _timerText;
+    [SerializeField] private Canvas _pause;
+    [SerializeField] private Canvas _victory;
 
     private void Awake()
     {
@@ -53,7 +57,16 @@ public class GameManager : MonoBehaviour
         {
             Respawn();
         }
-        _timerText.text = $"Time: {Time.timeSinceLevelLoad:F2}s";
+
+        if (_timerText != null)
+        {
+            _timerText.text = $"Time: {Time.timeSinceLevelLoad:F2}s";
+        }
+
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            Pause();
+        }
     }
 
     public void Respawn()
@@ -77,4 +90,16 @@ public class GameManager : MonoBehaviour
         Debug.Log("Level Complete! Implement level transition logic here.");
     }
 
+    public void Pause()
+    {
+        if (Time.timeScale > 0f)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
+            _pause.gameObject.SetActive(!_pause.gameObject.activeSelf);
+    }
 }
