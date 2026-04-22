@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using TMPro;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -9,10 +9,10 @@ public class GameManager : MonoBehaviour
 
     [Header("Checkpoint System")]
     [SerializeField] private CheckPoint _currentCheckPoint;
-    public CheckPoint CurrentCheckPoint 
-    { 
-        get => _currentCheckPoint; 
-        set => _currentCheckPoint = value; 
+    public CheckPoint CurrentCheckPoint
+    {
+        get => _currentCheckPoint;
+        set => _currentCheckPoint = value;
     }
 
     [Header("Kill Settings")]
@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     public float FallThreshold => _fallThreshold;
 
     private Vector3 _startPosition;
+
+    [SerializeField] private TextMeshProUGUI _timerText;
 
     private void Awake()
     {
@@ -51,21 +53,28 @@ public class GameManager : MonoBehaviour
         {
             Respawn();
         }
+        _timerText.text = $"Time: {Time.timeSinceLevelLoad:F2}s";
     }
 
     public void Respawn()
     {
         if (_player == null) return;
 
-        Vector3 respawnPos = _currentCheckPoint != null 
-            ? _currentCheckPoint.RespawnPoint.position 
+        Vector3 respawnPos = _currentCheckPoint != null
+            ? _currentCheckPoint.RespawnPoint.position
             : _startPosition;
 
         _player.ResetToPosition(respawnPos);
-        
+
         if (_currentCheckPoint == null)
         {
             Debug.Log("Respawning to start position (no checkpoint active).");
         }
     }
+
+    public void LevelComplete()
+    {
+        Debug.Log("Level Complete! Implement level transition logic here.");
+    }
+
 }
