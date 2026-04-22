@@ -35,41 +35,30 @@ public class marnoldMover : MonoBehaviour
     void FixedUpdate()
     {
         // 1. Determine Target Velocity in World Space
-        // Forward (W/S) maps to World Z, Strafe (A/D) maps to World X
         Vector3 targetVelocity = new Vector3(_input.x, 0, _input.y) * _maxSpeed;
 
-        // 2. Smooth Velocity Interpolation (The Envelope)
-        // We use 'acceleration' if pushing, and 'braking' if releasing keys
-        float currentSpeedLimit = (_input.sqrMagnitude > 0.01f) ? _acceleration : _braking;
-
+        // 2. Calculate Velocity Delta
         Vector3 currentVelocity = _rb.linearVelocity;
-        // We only want to affect the horizontal (X/Z) velocity
         Vector3 horizontalVelocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
-        
-        Vector3 newHorizontalVelocity = Vector3.MoveTowards(
-            horizontalVelocity, 
-            targetVelocity, 
-            currentSpeedLimit * Time.fixedDeltaTime
-        );
+        Vector3 velocityChange = targetVelocity - horizontalVelocity;
 
-        // 3. Apply the new velocity while preserving gravity/vertical movement
-        _rb.linearVelocity = new Vector3(newHorizontalVelocity.x, currentVelocity.y, newHorizontalVelocity.z);
+        // 3. Apply Acceleration/Braking Logic
+        float accelerationRate = (_input.sqrMagnitude > 0.01f) ? _acceleration : _braking;
+        Vector3 movementForce = velocityChange * accelerationRate;
+
+        // 4. Apply the Force
+        _rb.AddForce(movementForce, ForceMode.Force);
     }
 
-    /// <summary>
-    /// Resets the player to a target position and completely stops all physics movement.
-    /// </summary>
     public void ResetToPosition(Vector3 position)
     {
         transform.position = position;
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
-        // Optional: Reset any input state if needed
-        _input = Vector2.zero;
     }
 
     public void Jump(float force)
     {
-        _rb.AddForce(new Vector3(0, force, 0), ForceMode.Force);
+        _rb.AddForce(new Vector3(0, force, 0), ForceMode.Impulse);
     }
 }

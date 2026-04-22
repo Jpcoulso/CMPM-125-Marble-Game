@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cb436e4e7193674ead5a4523b2d6a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpPad
-  _jumpForce: 500
+  _jumpForce: 125
   _delayTime: 0.25
   _fxObject: {fileID: 4722697185901433401}
   _specialColor: {r: 0.7660377, g: 0.2066856, b: 0.2066856, a: 1}
