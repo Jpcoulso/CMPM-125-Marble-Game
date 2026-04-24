@@ -1,42 +1,64 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
+[RequireComponent(typeof(Rigidbody))]
 public class marnoldMover : MonoBehaviour
 {
-    //[Header("Movement Envelope Settings")]
-    //[Tooltip("Force applied at full sustain for input")]
-    //[SerializeField] private float _max_force = 20f;
-    //[Tooltip("Seconds to reach max force during sustained input")]
-    //[SerializeField] private float _ramp_time = 0.5f;
-    //[Tooltip("Seconds to decay to 0 force after input ends")]
-    //[SerializeField] private float _decay_time = 0.5f;
-    //[Tooltip("Handling")]
-    //[SerializeField] private float _turnrate = 0.15f;
+    [Header("Movement (Target Velocity)")]
+    [Tooltip("Maximum rolling speed.")]
+    [SerializeField] private float _maxSpeed = 10f;
+    [Tooltip("How fast it reaches max speed (Ramp).")]
+    [SerializeField] private float _acceleration = 30f;
+    [Tooltip("How fast it slows down (Decay).")]
+    [SerializeField] private float _braking = 20f;
 
-    private Rigidbody _rigidbody;
-    private Vector2 _raw_input;
-    private float _movement_x;
-    private float _movement_y; 
+    private Rigidbody _rb;
+    private Vector2 _input;
 
     void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-        _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        _rigidbody.angularDamping = 0.5f;
-        _rigidbody.linearDamping = 0.1f;
-    }
-    void OnMove(InputValue value)
-    {
-        _raw_input = value.Get<Vector2>();
-        _movement_x = _raw_input.x;
-        _movement_y = _raw_input.y;
+        _rb = GetComponent<Rigidbody>();
+
+        // Physics cleanup for marbles
+        _rb.linearDamping = 0.5f;
+        _rb.angularDamping = 0.5f;
+        _rb.interpolation = RigidbodyInterpolation.Interpolate;
+        _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
-    private void FixedUpdate()
+    // Input System Message
+    void OnMove(InputValue value)
     {
-        Vector3 movement = new Vector3(_movement_x, 0.0f, _movement_y);
-        _rigidbody.AddForce(movement);
+        _input = value.Get<Vector2>();
+    }
+
+    void FixedUpdate()
+    {
+        // 1. Determine Target Velocity in World Space
+        Vector3 targetVelocity = new Vector3(_input.x, 0, _input.y) * _maxSpeed;
+
+        // 2. Calculate Velocity Delta
+        Vector3 currentVelocity = _rb.linearVelocity;
+        Vector3 horizontalVelocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
+        Vector3 velocityChange = targetVelocity - horizontalVelocity;
+
+        // 3. Apply Acceleration/Braking Logic
+        float accelerationRate = (_input.sqrMagnitude > 0.01f) ? _acceleration : _braking;
+        Vector3 movementForce = velocityChange * accelerationRate;
+
+        // 4. Apply the Force
+        _rb.AddForce(movementForce, ForceMode.Force);
+    }
+
+    public void ResetToPosition(Vector3 position)
+    {
+        transform.position = position;
+        _rb.linearVelocity = Vector3.zero;
+        _rb.angularVelocity = Vector3.zero;
+    }
+
+    public void Jump(float force)
+    {
+        _rb.AddForce(new Vector3(0, force, 0), ForceMode.Impulse);
     }
 }
