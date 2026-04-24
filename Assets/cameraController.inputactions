@@ -1,0 +1,77 @@
+{
+    "version": 1,
+    "name": "cameraController",
+    "maps": [
+        {
+            "name": "CameraControls",
+            "id": "486c5bf0-c36f-4807-8f04-f07bd3ac281c",
+            "actions": [
+                {
+                    "name": "MouseZoom",
+                    "type": "Value",
+                    "id": "64cdc693-5ae3-423b-b9d0-242e74ea7a33",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "GamepadZoom",
+                    "type": "Value",
+                    "id": "577248e5-c8b5-4b3e-b58d-8fb9ce7bf639",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "93eafcd4-11c2-475e-9c70-9cad206fd74a",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "982e8f2e-f9b2-4335-8a9e-76f9a6dcbf50",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GamepadZoom",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "89c7e564-cf3d-4c9f-8375-2d615a0fbb58",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GamepadZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "31a06427-95bc-4bf0-8843-cd010054f131",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GamepadZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
