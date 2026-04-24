@@ -1,3 +1,5 @@
+using System.Numerics;
+//using System.Threading.Tasks.Dataflow;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,8 +14,10 @@ public class marnoldMover : MonoBehaviour
     [Tooltip("How fast it slows down (Decay).")]
     [SerializeField] private float _braking = 20f;
 
+    [SerializeField] Transform cameraTransform;
+
     private Rigidbody _rb;
-    private Vector2 _input;
+    private UnityEngine.Vector2 _input;
 
     void Start()
     {
@@ -29,36 +33,49 @@ public class marnoldMover : MonoBehaviour
     // Input System Message
     void OnMove(InputValue value)
     {
-        _input = value.Get<Vector2>();
+        _input = value.Get<UnityEngine.Vector2>();
     }
 
     void FixedUpdate()
     {
+
+        // calculate direction to move based on camera position
+        UnityEngine.Vector3 forward = cameraTransform.forward;
+        UnityEngine.Vector3 right = cameraTransform.right;
+
+        forward.y = 0;
+        right.y = 0;
+
+        forward.Normalize();
+        right.Normalize();
+
+        UnityEngine.Vector3 moveDirection = (forward * _input.y) + (right * _input.x);
+
         // 1. Determine Target Velocity in World Space
-        Vector3 targetVelocity = new Vector3(_input.x, 0, _input.y) * _maxSpeed;
+        UnityEngine.Vector3 targetVelocity = moveDirection * _maxSpeed;
 
         // 2. Calculate Velocity Delta
-        Vector3 currentVelocity = _rb.linearVelocity;
-        Vector3 horizontalVelocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
-        Vector3 velocityChange = targetVelocity - horizontalVelocity;
+        UnityEngine.Vector3 currentVelocity = _rb.linearVelocity;
+        UnityEngine.Vector3 horizontalVelocity = new UnityEngine.Vector3(currentVelocity.x, 0, currentVelocity.z);
+        UnityEngine.Vector3 velocityChange = targetVelocity - horizontalVelocity;
 
         // 3. Apply Acceleration/Braking Logic
         float accelerationRate = (_input.sqrMagnitude > 0.01f) ? _acceleration : _braking;
-        Vector3 movementForce = velocityChange * accelerationRate;
+        UnityEngine.Vector3 movementForce = velocityChange * accelerationRate;
 
         // 4. Apply the Force
         _rb.AddForce(movementForce, ForceMode.Force);
     }
 
-    public void ResetToPosition(Vector3 position)
+    public void ResetToPosition(UnityEngine.Vector3 position)
     {
         transform.position = position;
-        _rb.linearVelocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
+        _rb.linearVelocity = UnityEngine.Vector3.zero;
+        _rb.angularVelocity = UnityEngine.Vector3.zero;
     }
 
     public void Jump(float force)
     {
-        _rb.AddForce(new Vector3(0, force, 0), ForceMode.Impulse);
+        _rb.AddForce(new UnityEngine.Vector3(0, force, 0), ForceMode.Impulse);
     }
 }
